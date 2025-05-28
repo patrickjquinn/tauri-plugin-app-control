@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-is-app-in-foreground"
+description = "Enables the is_app_in_foreground command without any pre-configured scope."
+commands.allow = ["is_app_in_foreground"]
+
+[[permission]]
+identifier = "deny-is-app-in-foreground"
+description = "Denies the is_app_in_foreground command without any pre-configured scope."
+commands.deny = ["is_app_in_foreground"]

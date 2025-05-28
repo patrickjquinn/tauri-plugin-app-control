@@ -1,0 +1,20 @@
+[package]
+name = "tauri-plugin-app-control"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <you@example.com>"]
+description = "Tauri plugin for controlling app lifecycle on Android"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/tauri-plugin-app-control"
+keywords = ["tauri", "plugin", "android", "lifecycle", "minimize"]
+categories = ["gui"]
+links = "tauri-plugin-app-control"
+
+[dependencies]
+tauri = { version = "2.5.0", features = [] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+
+[build-dependencies]
+tauri-plugin = { version = "2.2.0", features = ["build"] }

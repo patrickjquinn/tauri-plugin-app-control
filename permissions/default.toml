@@ -1,0 +1,27 @@
+# Default permissions for the app-control plugin
+
+[[permission]]
+identifier = "allow-minimize-app"
+description = "Allows minimizing the app to background"
+
+[[permission]]
+identifier = "allow-close-app"
+description = "Allows closing the app"
+
+[[permission]]
+identifier = "allow-exit-app"
+description = "Allows exiting the app completely"
+
+[[permission]]
+identifier = "allow-is-app-in-foreground"
+description = "Allows checking if app is in foreground"
+
+[[set]]
+identifier = "default"
+description = "Default permissions for app control"
+permissions = [
+    "allow-minimize-app",
+    "allow-close-app",
+    "allow-exit-app",
+    "allow-is-app-in-foreground"
+]
