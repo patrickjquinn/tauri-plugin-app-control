@@ -6,46 +6,36 @@ pub struct AppControl<R: Runtime>(AppHandle<R>);
 
 impl<R: Runtime> AppControl<R> {
     pub fn minimize_app(&self) -> crate::Result<MinimizeResult> {
-        // Desktop implementation - minimize all windows
+        // Only minimize the main window
         let mut minimized_count = 0;
-        let windows = self.0.windows();
-        let total_windows = windows.len();
-        
-        for window in windows.values() {
+        if let Some(window) = self.0.get_webview_window("main") {
             if window.minimize().is_ok() {
                 minimized_count += 1;
             }
         }
-        
         Ok(MinimizeResult {
             success: minimized_count > 0,
-            message: format!("Minimized {}/{} windows", minimized_count, total_windows),
+            message: format!("Minimized {}/1 windows", minimized_count),
         })
     }
 
     pub fn close_app(&self) -> crate::Result<CloseResult> {
-        // Desktop implementation - close all windows
+        // Only close the main window
         let mut closed_count = 0;
-        let windows = self.0.windows();
-        let total_windows = windows.len();
-        
-        for window in windows.values() {
+        if let Some(window) = self.0.get_webview_window("main") {
             if window.close().is_ok() {
                 closed_count += 1;
             }
         }
-        
         Ok(CloseResult {
             success: closed_count > 0,
-            message: format!("Closed {}/{} windows", closed_count, total_windows),
+            message: format!("Closed {}/1 windows", closed_count),
         })
     }
 
     pub fn exit_app(&self, _options: ExitOptions) -> crate::Result<ExitResult> {
         // Desktop implementation - exit the app
-        // Note: options are ignored on desktop as they're Android-specific
         self.0.exit(0);
-        
         Ok(ExitResult {
             success: true,
             message: "App exit initiated".to_string(),
@@ -53,30 +43,24 @@ impl<R: Runtime> AppControl<R> {
     }
 
     pub fn is_app_in_foreground(&self) -> crate::Result<AppState> {
-        // Check if any window is visible and focused
+        // Only check the main window
         let mut in_foreground = false;
         let mut has_visible_window = false;
-        let windows = self.0.windows();
-        
-        for window in windows.values() {
+        if let Some(window) = self.0.get_webview_window("main") {
             if let Ok(is_visible) = window.is_visible() {
                 if is_visible {
                     has_visible_window = true;
                     if let Ok(is_focused) = window.is_focused() {
                         if is_focused {
                             in_foreground = true;
-                            break;
                         }
                     }
                 }
             }
         }
-        
-        // If no window is focused but we have visible windows, we're still "active"
         if !in_foreground && has_visible_window {
             in_foreground = true;
         }
-        
         Ok(AppState {
             in_foreground,
             is_finishing: false, // Not applicable on desktop
