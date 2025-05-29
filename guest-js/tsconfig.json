@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "../dist", // This is handled by rollup, but good for IDEs
+    "declaration": true, // Handled by rollup, but good for IDEs
+    "declarationDir": "../dist", // Handled by rollup
+    "paths": {
+      "@tauri-apps/api/*": ["../node_modules/@tauri-apps/api/src/*"]
+    }
+  },
+  "include": ["index.ts"],
+  "exclude": [
+    "node_modules",
+    "../dist" // Also exclude the output directory relative to this tsconfig
+  ]
+} 

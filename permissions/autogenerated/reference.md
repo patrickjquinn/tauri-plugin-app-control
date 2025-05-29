@@ -1,3 +1,13 @@
+## Default Permission
+
+Allows controlling app lifecycle (minimize, close, exit) and checking foreground state.
+
+#### This default permission set includes the following:
+
+- `plugin:app-control|minimize_app`
+- `plugin:app-control|close_app`
+- `plugin:app-control|exit_app`
+- `plugin:app-control|is_app_in_foreground`
 
 ## Permission Table
 
@@ -134,71 +144,6 @@ Enables the ping command without any pre-configured scope.
 <td>
 
 Denies the ping command without any pre-configured scope.
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`app-control:default`
-
-</td>
-<td>
-
-Default permissions for app control
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`app-control:allow-minimize-app`
-
-</td>
-<td>
-
-Allows minimizing the app to background
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`app-control:allow-close-app`
-
-</td>
-<td>
-
-Allows closing the app
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`app-control:allow-exit-app`
-
-</td>
-<td>
-
-Allows exiting the app completely
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-`app-control:allow-is-app-in-foreground`
-
-</td>
-<td>
-
-Allows checking if app is in foreground
 
 </td>
 </tr>

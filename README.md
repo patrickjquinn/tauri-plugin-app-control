@@ -1,64 +1,65 @@
-# Tauri Plugin App Control
+ # Tauri Plugin: App Control
 
-[![crates.io](https://img.shields.io/crates/v/tauri-plugin-app-control.svg)](https://crates.io/crates/tauri-plugin-app-control) 
+[![crates.io](https://img.shields.io/crates/v/tauri-plugin-app-control.svg)](https://crates.io/crates/tauri-plugin-app-control)
 [![documentation](https://img.shields.io/docsrs/tauri-plugin-app-control)](https://docs.rs/tauri-plugin-app-control)
+[![License: Apache-2.0 OR MIT](https://img.shields.io/badge/License-Apache--2.0%20OR%20MIT-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-A Tauri plugin for comprehensive control over your application's lifecycle, with a primary focus on Android, and graceful fallbacks for Desktop.
+A Tauri 2 plugin focused on providing comprehensive **Android application lifecycle control**. It allows you to programmatically minimize, close, and exit your Tauri application on Android, check its foreground/background state, and listen to native lifecycle events. Desktop functionality is included with stubbed implementations that return an `UnsupportedPlatform` error, clearly indicating that these features are mobile-centric.
 
-This plugin allows you to programmatically minimize, close, and exit your Tauri application, check its foreground/background state, and listen to lifecycle events.
+## Features (Primarily Android)
 
-## Features
+-   **Minimize App**: Sends the Android app to the background (equivalent to pressing the Home button).
+-   **Close App**: Closes the current Android Activity.
+-   **Exit App**: Completely exits the Android application with options to:
+    -   Remove from recents screen (Android Lollipop+).
+    -   Forcefully kill the app process (use with caution).
+-   **Check App State**: Determines if the Android app is in the foreground, if the activity is finishing or destroyed, and provides the package name.
+-   **Lifecycle Events (Android)**:
+    -   `plugin-loaded`: Emitted when the native Android plugin part is loaded.
+    -   `app-resumed`: Emitted when the app is brought back to the foreground or a new intent is received.
+    -   `app-minimized`: Emitted after the app is successfully minimized.
+    -   `app-closing`: Emitted just before the current activity closes.
+    -   `app-exiting`: Emitted just before the app exits via the `exitApp` command.
 
-- **Minimize App**: 
-  - Android: Sends the app to the background (similar to pressing the Home button).
-  - Desktop: Minimizes the main application window.
-- **Close App**:
-  - Android: Closes the current Android Activity.
-  - Desktop: Closes the main application window.
-- **Exit App**: 
-  - Android: Completely exits the application with options to remove from recents and kill the process.
-  - Desktop: Exits the application process.
-- **Check App State**:
-  - Android: Determines if the app is in the foreground, finishing, or destroyed, and provides the package name.
-  - Desktop: Determines if the main application window is focused and visible.
-- **Lifecycle Events** (Android & Desktop where applicable):
-  - `plugin-loaded`: Emitted when the plugin is successfully loaded.
-  - `app-minimized`: Emitted after the app is minimized.
-  - `app-closing`: Emitted just before the app/activity closes.
-  - `app-exiting`: Emitted just before the app exits.
-  - `app-resumed`: Emitted when the app is brought back to the foreground (primarily Android).
+**Desktop Behavior:**
+All functions will return an `Error::UnsupportedPlatform` when called on a desktop environment, as this plugin is specifically designed for Android control.
 
 ## Prerequisites
 
-Ensure your Tauri project is set up for Android development if targeting Android. Follow the official [Tauri Android guide](https://tauri.app/v1/guides/building/android/).
+-   Your Tauri project must be set up for Android development. Follow the official [Tauri Android guide](https://tauri.app/v2/guides/building/android).
+-   This plugin is designed for Tauri 2.x.
 
 ## Setup
 
-There are two ways to install this plugin:
+There are two main parts to installing this plugin: the Rust (Core) part and the JavaScript (API Bindings) part.
 
-1.  **Using `cargo add` (recommended for Rust dependencies):**
-    Open your Tauri app's `src-tauri/Cargo.toml` and run:
-    ```bash
-    cargo add tauri-plugin-app-control --path /path/to/your/tauri-plugin-app-control
-    ```
-    (Replace `/path/to/your/tauri-plugin-app-control` with the actual local path to this plugin directory if you're not publishing it to crates.io yet). 
+### 1. Rust Crate Installation
 
-    If published to crates.io, you can use:
-    ```bash
-    cargo add tauri-plugin-app-control
-    ```
+Add the plugin to your Tauri app's `src-tauri/Cargo.toml`.
 
-2.  **Manual `Cargo.toml` edit:**
-    Add the following to your `src-tauri/Cargo.toml` under `[dependencies]`:
-    ```toml
-    tauri-plugin-app-control = { path = "/path/to/your/tauri-plugin-app-control" } 
-    # Or if published to crates.io:
-    # tauri-plugin-app-control = "0.1.0" # Replace with the desired version
-    ```
+**A. Using `cargo add` (Recommended for local development):**
+If you have the plugin locally:
+```bash
+cargo add tauri-plugin-app-control --path /path/to/your/tauri-plugin-app-control
+```
+*(Replace `/path/to/your/tauri-plugin-app-control` with the actual local path to this plugin's directory.)*
 
-### Register the Plugin
+If published to crates.io (once it is):
+```bash
+cargo add tauri-plugin-app-control
+```
 
-In your `src-tauri/src/main.rs` (or `lib.rs` if you have a lib-based project), register the plugin with Tauri:
+**B. Manual `Cargo.toml` Edit:**
+Add the following to your `src-tauri/Cargo.toml` under `[dependencies]`:
+```toml
+tauri-plugin-app-control = { path = "/path/to/your/tauri-plugin-app-control" } 
+# Or if published to crates.io (replace with actual version):
+# tauri-plugin-app-control = "0.1.0"
+```
+
+### 2. Register the Plugin (Rust)
+
+In your `src-tauri/src/main.rs`, register the plugin with Tauri's builder:
 
 ```rust
 fn main() {
@@ -69,74 +70,111 @@ fn main() {
 }
 ```
 
-### Add Capabilities (for Tauri v2+)
+### 3. JavaScript/TypeScript API Installation
 
-If you are using Tauri v2 or later, you need to allowlist the plugin's commands in your app's capabilities file.
+The JavaScript bindings provide a typed API to interact with the plugin from your frontend code.
 
-Create or modify `src-tauri/capabilities/default.json` (or your specific capability file if not using `default`):
+**A. Install the NPM package:**
+
+The NPM package for this plugin is `tauri-plugin-app-control-api`.
+
+If you are developing the plugin locally and want to test it in another project, you should first link it. Navigate to the root of *this plugin's directory* (`tauri-plugin-app-control`) and run:
+```bash
+# Using bun
+bun link
+
+# Using npm
+npm link
+
+# Using yarn v1 (classic)
+yarn link
+```
+This makes the package `tauri-plugin-app-control-api` available globally for linking.
+
+Then, in your **Tauri application's root directory** (where your frontend `package.json` is), link the package:
+```bash
+# Using bun
+bun link tauri-plugin-app-control-api
+
+# Using npm
+npm link tauri-plugin-app-control-api
+
+# Using yarn v1 (classic)
+yarn link tauri-plugin-app-control-api
+```
+
+If this plugin were published to NPM, you would install it directly in your Tauri application:
+```bash
+# Using bun
+bun add tauri-plugin-app-control-api
+
+# Using npm
+npm install tauri-plugin-app-control-api
+
+# Using pnpm
+pnpm add tauri-plugin-app-control-api
+
+# Using yarn
+yarn add tauri-plugin-app-control-api
+```
+
+### 4. Permissions (Tauri v2+)
+
+For Tauri v2 and later, you must explicitly grant permissions to your plugin's commands. The `app-control` plugin comes with a default permission set that allows all its commands.
+
+In your app's `src-tauri/capabilities/default.json` (or your specific capability file), add the plugin's default permission set:
 
 ```json
 {
-  "$schema": "../gen/schemas/desktop-schema.json", // Or mobile-schema.json if applicable
+  "$schema": "../gen/schemas/desktop-schema.json", // Or mobile-schema.json for mobile-focused apps
   "identifier": "default",
-  "description": "Default permissions for the app",
-  "windows": ["main"], // Ensure your main window label is listed
+  "description": "Default capabilities for the application.",
+  "windows": [
+    "main" // Ensure your main window identifier is listed
+  ],
   "permissions": [
-    "core:default", // Keep other default permissions
-    "app-control:default" // Add this line to grant all plugin permissions
+    "core:default", // Or other core permissions you use
+    "plugin:app-control|default" // Add this line
   ]
 }
 ```
 
-This grants the `default` permission set from the plugin, which includes:
-*   `allow-minimize-app`
-*   `allow-close-app`
-*   `allow-exit-app`
-*   `allow-is-app-in-foreground`
+This grants permissions for `minimize_app`, `close_app`, `exit_app`, and `is_app_in_foreground` commands when invoked from JavaScript.
 
-You can also grant permissions individually if preferred.
+## Usage (JavaScript/TypeScript API)
 
-### Install JavaScript/TypeScript API
+Import the desired functions and types from the `tauri-plugin-app-control-api` package in your frontend code.
 
-In your frontend project (e.g., the root of your Svelte/React/Vue app), install the JS bindings:
-
-```bash
-npm install /path/to/your/tauri-plugin-app-control/webview-src
-# or
-yarn add /path/to/your/tauri-plugin-app-control/webview-src
-# or
-pnpm add /path/to/your/tauri-plugin-app-control/webview-src
-```
-
-If you publish the `webview-src` directory as an NPM package (e.g., as `tauri-plugin-app-control-api`), you would install it by its package name:
-```bash
-npm install tauri-plugin-app-control-api
-```
-
-**Note**: The `package.json` within `webview-src` is configured to be named `tauri-plugin-app-control-api`.
-
-## Usage
-
-Import the functions from the JavaScript API into your frontend code:
-
-```javascript
+```typescript
 import {
   minimizeApp,
   closeApp,
   exitApp,
   isAppInForeground,
+  type ExitOptions, // TypeScript type
+  type MinimizeResult,
+  type CloseResult,
+  type ExitResult,
+  type AppState,
+  // Event listeners
   onPluginLoaded,
+  onAppResumed,
   onAppMinimized,
   onAppClosing,
   onAppExiting,
-  onAppResumed
-} from 'tauri-plugin-app-control-api'; // Or the local path if not installed as a package
+  type PluginLoadedEvent,
+  type AppResumedEvent,
+  type AppMinimizedEvent,
+  type AppClosingEvent,
+  type AppExitingEvent,
+  type PluginListener // Type for the unlisten function
+} from 'tauri-plugin-app-control-api';
 
-// Example: Minimize the app
+// Example: Minimize the app (Android)
 async function handleMinimize() {
   try {
-    const result = await minimizeApp();
-    console.log(result.message);
+    const result: MinimizeResult = await minimizeApp();
+    console.log('Minimize success:', result.success, 'Message:', result.message);
   } catch (error) {
     console.error('Failed to minimize:', error);
   }
@@ -144,157 +182,164 @@ async function handleMinimize() {
 
 // Example: Exit the app with options (Android)
 async function handleExit() {
+  const options: ExitOptions = { 
+    removeFromRecents: true, 
+    killProcess: false 
+  };
   try {
-    const result = await exitApp({ 
-      removeFromRecents: true, 
-      killProcess: false 
-    });
-    console.log(result.message);
+    const result: ExitResult = await exitApp(options);
+    console.log('Exit success:', result.success, 'Message:', result.message);
   } catch (error) {
     console.error('Failed to exit:', error);
   }
 }
 
-// Example: Check app state
+// Example: Check app state (Android)
 async function checkState() {
   try {
-    const state = await isAppInForeground();
+    const state: AppState = await isAppInForeground();
     console.log('App in foreground:', state.inForeground);
-    console.log('App is finishing:', state.isFinishing); // Android specific
-    if (state.packageName) {
-      console.log('Package Name:', state.packageName);
-    }
+    console.log('App is finishing:', state.isFinishing);
+    console.log('App is destroyed:', state.isDestroyed);
+    console.log('Package Name:', state.packageName);
   } catch (error) {
     console.error('Failed to check state:', error);
   }
 }
 
-// Example: Listen to events
+// Example: Listen to events (Android)
 async function setupEventListeners() {
-  const unlistenLoaded = await onPluginLoaded(event => {
-    console.log('App Control Plugin Loaded:', event.message, event.platform, event.apiLevel);
+  const unlistenLoaded: PluginListener = await onPluginLoaded((event: PluginLoadedEvent) => {
+    console.log('App Control Plugin Loaded:', event.message, 'Platform:', event.platform, 'API Level:', event.apiLevel);
   });
 
-  const unlistenMinimized = await onAppMinimized(event => {
-    console.log('App Minimized:', event.message);
+  const unlistenMinimized: PluginListener = await onAppMinimized((event: AppMinimizedEvent) => {
+    console.log('App Minimized:', event.success, event.message);
   });
 
-  const unlistenResumed = await onAppResumed(event => {
+  const unlistenResumed: PluginListener = await onAppResumed((event: AppResumedEvent) => {
     console.log('App Resumed:', event.action, event.data, event.categories);
   });
 
-  // To clean up listeners when your component unmounts or is no longer needed:
-  // unlistenLoaded();
-  // unlistenMinimized();
-  // unlistenResumed();
+  // Remember to clean up listeners when your component unmounts or they are no longer needed:
+  // unlistenLoaded.unlisten(); // or just call unlistenLoaded()
+  // unlistenMinimized.unlisten();
+  // unlistenResumed.unlisten();
 }
 
 setupEventListeners();
 ```
 
-## API
+## API Details
 
-### Commands
+### Commands (via JS API)
 
 -   `async minimizeApp(): Promise<MinimizeResult>`
-    -   Minimizes the application.
-    -   `MinimizeResult`: `{ success: boolean; message: string; }`
+    -   Minimizes the Android application.
+    -   `MinimizeResult`: `{ success: boolean; message?: string; }`
 
 -   `async closeApp(): Promise<CloseResult>`
-    -   Closes the current activity (Android) or main window (Desktop).
-    -   `CloseResult`: `{ success: boolean; message: string; }`
+    -   Closes the current Android activity.
+    -   `CloseResult`: `{ success: boolean; message?: string; }`
 
 -   `async exitApp(options?: ExitOptions): Promise<ExitResult>`
-    -   Exits the application completely.
-    -   `ExitOptions` (Android only, defaults are `removeFromRecents: true`, `killProcess: false`):
-        -   `removeFromRecents?: boolean`: Whether to remove the app from the recent apps list (Android Lollipop+).
-        -   `killProcess?: boolean`: Whether to forcefully kill the app process. Use with caution.
-    -   `ExitResult`: `{ success: boolean; message: string; }`
+    -   Exits the Android application completely.
+    -   `ExitOptions` (Android only, all optional, defaults are `removeFromRecents: true`, `killProcess: false`):
+        -   `removeFromRecents?: boolean`: Remove app from recents list (Lollipop+).
+        -   `killProcess?: boolean`: Forcefully kill the app process.
+    -   `ExitResult`: `{ success: boolean; message?: string; }`
 
 -   `async isAppInForeground(): Promise<AppState>`
-    -   Checks the current state of the application.
+    -   Checks the current state of the Android application.
     -   `AppState`:
         -   `inForeground: boolean`
-        -   `isFinishing: boolean` (Android specific)
-        -   `isDestroyed?: boolean` (Android API 17+)
-        -   `packageName?: string`
+        -   `isFinishing: boolean`
+        -   `isDestroyed: boolean` (Android API 17+)
+        -   `packageName: string`
 
-### Events
+### Events (Android - via JS API)
 
--   `onPluginLoaded(handler: (event: { message: string; platform: string; apiLevel?: number }) => void): Promise<PluginListener>`
-    -   Triggered when the plugin finishes loading.
-    -   `apiLevel` is Android specific.
+Each event listener function returns a `Promise<PluginListener>`, where `PluginListener` is an object with an `unlisten: () => void` method (or can be called directly as a function) to remove the event listener.
 
--   `onAppMinimized(handler: (event: MinimizeResult) => void): Promise<PluginListener>`
-    -   Triggered after the app is successfully minimized.
+-   `onPluginLoaded(handler: (event: PluginLoadedEvent) => void): Promise<PluginListener>`
+    -   `PluginLoadedEvent`: `{ message: string; platform: string; apiLevel?: number; }` (`apiLevel` is Android specific)
 
--   `onAppClosing(handler: (event: { message: string; timestamp: number }) => void): Promise<PluginListener>`
-    -   Triggered just before the app/activity attempts to close.
+-   `onAppMinimized(handler: (event: AppMinimizedEvent) => void): Promise<PluginListener>`
+    -   `AppMinimizedEvent`: `{ success: boolean; message?: string; }` (extends `MinimizeResult`)
 
--   `onAppExiting(handler: (event: { removeFromRecents: boolean; killProcess: boolean; timestamp: number }) => void): Promise<PluginListener>`
-    -   Triggered just before the app attempts to exit (after `exitApp` is called).
+-   `onAppClosing(handler: (event: AppClosingEvent) => void): Promise<PluginListener>`
+    -   `AppClosingEvent`: `{ message: string; timestamp: number; }`
 
--   `onAppResumed(handler: (event: { action: string; data?: string; categories?: string }) => void): Promise<PluginListener>`
-    -   Triggered when the app is brought back to the foreground (e.g., from recents or a new intent on Android).
+-   `onAppExiting(handler: (event: AppExitingEvent) => void): Promise<PluginListener>`
+    -   `AppExitingEvent`: `{ removeFromRecents: boolean; killProcess: boolean; timestamp: number; }`
 
-`PluginListener` is an object with an `unlisten` function to remove the event listener.
+-   `onAppResumed(handler: (event: AppResumedEvent) => void): Promise<PluginListener>`
+    -   `AppResumedEvent`: `{ action: string; data?: string; categories?: string; }`
 
-## Platform Specifics
+### Rust API (for use within `src-tauri`)
 
-### Android
+You can also use the plugin's functions directly from Rust code via the `AppControlExt` trait.
 
--   Leverages native Android Activity lifecycle methods.
--   `minimizeApp()` uses `moveTaskToBack(true)`.
--   `closeApp()` calls `finish()` on the current Activity.
--   `exitApp()` provides options for `finishAndRemoveTask()` and `Process.killProcess()`.
--   All lifecycle events are fully supported.
+```rust
+use tauri_plugin_app_control::{AppControlExt, ExitOptions, AppState, MinimizeResult};
+// In a function where you have access to AppHandle, Window, etc.
+fn example_rust_usage<R: tauri::Runtime>(app_handle: &tauri::AppHandle<R>) {
+    // Minimize
+    match app_handle.app_control().minimize_app() {
+        Ok(MinimizeResult { success, message }) => println!("Minimize success: {}, message: {}", success, message.unwrap_or_default()),
+        Err(e) => eprintln!("Minimize error: {:?}", e),
+    }
 
-#### Optional: Handle Android Back Button
+    // Check foreground state
+    match app_handle.app_control().is_app_in_foreground() {
+        Ok(AppState { in_foreground, .. }) => println!("App in foreground from Rust: {}", in_foreground),
+        Err(e) => eprintln!("Error getting app state from Rust: {:?}", e),
+    }
 
-To override the default Android back button behavior (e.g., to minimize instead of going back or closing), you can modify your `MainActivity.kt` in your Tauri app (`src-tauri/gen/android/{your_app_id}/MainActivity.kt` or similar path):
-
-```kotlin
-// In your app's MainActivity.kt
-override fun onBackPressed() {
-    // Example: Minimize the app instead of default behavior
-    // You could also call the plugin here if you prefer via an event or direct call
-    // For instance, by sending an event to JS which then calls the plugin.
-    // Direct call example (if plugin instance is accessible, might require setup):
-    // val appControlPlugin = tauri::plugins::PluginManager.getPlugin("app-control") as? AppControlPlugin
-    // appControlPlugin?.minimizeAppFromNativeSide() // You would need to add such a method
-
-    // Simpler: just move task to back directly
-    this.moveTaskToBack(true)
-    // If you want to use the plugin's minimizeApp which also emits events:
-    // You would typically trigger this from the JS side after catching a back button event there.
+    // Exit app
+    let options = ExitOptions { remove_from_recents: true, kill_process: false };
+    if let Err(e) = app_handle.app_control().exit_app(options) {
+        eprintln!("Exit error from Rust: {:?}", e);
+    }
 }
 ```
+Note: When calling `exit_app` directly from Rust as shown above, the `ExitOptions` struct in Rust has non-optional fields (`removeFromRecents: bool`, `killProcess: bool`). This differs slightly from the JS API's optional fields due to how `#[derive(Deserialize)]` works with `Option` for command arguments versus direct struct instantiation.
 
-### Desktop (Windows, macOS, Linux)
+## Android Specifics
 
--   `minimizeApp()`: Minimizes the main application window.
--   `closeApp()`: Closes the main application window.
--   `exitApp()`: Calls `std::process::exit(0)` or equivalent `app.exit(0)`.
--   `isAppInForeground()`: Checks if the main window is visible and focused.
--   `ExitOptions` are ignored on desktop.
--   Lifecycle events like `app-resumed` have limited applicability compared to Android but will be emitted where sensible (e.g., window focus changes might trigger similar logic if implemented).
+-   Utilizes native Android `Activity` lifecycle methods and `ActivityManager`.
+-   `minimizeApp()` uses `activity.moveTaskToBack(true)`.
+-   `closeApp()` calls `activity.finish()`.\n-   `exitApp()` uses `activity.finishAndRemoveTask()` and `android.os.Process.killProcess()` based on options.
+
+## Desktop Behavior
+
+As mentioned, on desktop platforms (Windows, macOS, Linux), all plugin functions (both from Rust and JS) will result in an `Error::UnsupportedPlatform` being returned. This is by design, as the core focus is Android control.
 
 ## Building the Plugin (Development)
 
-1.  Navigate to the plugin directory: `cd tauri-plugin-app-control`
-2.  Build the Rust code: `cargo build`
-3.  Build the TypeScript bindings:
+1.  Navigate to the root directory of this plugin: `cd tauri-plugin-app-control`
+2.  **Rust & Android Native Code:**
     ```bash
-    cd webview-src
-    npm install # Or pnpm install / bun install
-    npm run build # Or your equivalent script that runs tsc
-    cd ..
+    cargo build # For host
+    cargo build --target aarch64-linux-android # For Android (or other targets)
+    ```
+    (The `build.rs` script handles linking the Android Kotlin project during the Rust build process for mobile targets.)
+3.  **JavaScript/TypeScript Bindings:**
+    (Compiles `guest-js/*.ts` to `dist/` using Rollup)
+    ```bash
+    bun install # Or npm install, yarn install
+    bun run build # Or npm run build, yarn build
     ```
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request.
+Contributions that align with the Android-centric focus of this plugin are welcome. Please open an issue or submit a pull request.
 
 ## License
 
-This plugin is licensed under the MIT OR Apache-2.0 license.
+This plugin is licensed under either of
+
+-   Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
+-   MIT license ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+
+at your option.

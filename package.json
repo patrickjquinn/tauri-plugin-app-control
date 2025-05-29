@@ -4,31 +4,33 @@
   "author": "You",
   "description": "Tauri plugin for controlling app lifecycle",
   "type": "module",
-  "types": "dist/index.d.ts",
   "main": "dist/index.js",
-  "module": "./dist-js/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
-    "types": "./dist-js/index.d.ts",
-    "import": "./dist-js/index.js",
-    "require": "./dist-js/index.cjs"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
   },
   "files": [
     "dist",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
     "prepublishOnly": "npm run build",
-    "pretest": "pnpm build"
+    "check": "tsc --noEmit --project guest-js/tsconfig.json && cargo check"
   },
-  "keywords": ["tauri", "plugin", "android", "app-control"],
+  "keywords": ["tauri", "plugin", "android", "app-control", "lifecycle"],
   "dependencies": {
-    "@tauri-apps/api": "^2.0.0"
+    "@tauri-apps/api": "^2.5.0",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.6",
-    "rollup": "^4.9.6",
-    "typescript": "^5.0.0",
-    "tslib": "^2.6.2"
+    "@rollup/plugin-typescript": "^12.1.2",
+    "typescript": "^5.8.3"
   }
 }

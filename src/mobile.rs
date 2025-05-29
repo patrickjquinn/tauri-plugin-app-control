@@ -1,4 +1,3 @@
-use serde::de::DeserializeOwned;
 use tauri::{
   plugin::{PluginApi, PluginHandle},
   AppHandle, Runtime,
@@ -7,7 +6,7 @@ use tauri::{
 use crate::models::*;
 
 #[cfg(target_os = "android")]
-const PLUGIN_IDENTIFIER: &str = "com.plugin.appcontrol";
+const PLUGIN_IDENTIFIER: &str = "app.tauri.appcontrol";
 
 #[cfg(target_os = "ios")]
 tauri::ios_plugin_binding!(init_plugin_app_control);
@@ -42,13 +41,17 @@ impl<R: Runtime> AppControl<R> {
 
 pub(crate) fn init<R: Runtime>(
   _app: &AppHandle<R>,
-  api: PluginApi<R>,
+  api: PluginApi<R, ()>,
 ) -> crate::Result<AppControl<R>> {
   #[cfg(target_os = "android")]
-  api.register_android_plugin(PLUGIN_IDENTIFIER, "AppControlPlugin")?;
+  let handle = api
+    .register_android_plugin(PLUGIN_IDENTIFIER, "AppControlPlugin")
+    .map_err(|e| crate::error::Error::Unknown(e.to_string()))?;
   
   #[cfg(target_os = "ios")]
-  api.register_ios_plugin(init_plugin_app_control)?;
+  let handle = api
+    .register_ios_plugin(init_plugin_app_control)
+    .map_err(|e| crate::error::Error::Unknown(e.to_string()))?;
   
-  Ok(AppControl(api))
+  Ok(AppControl(handle))
 }

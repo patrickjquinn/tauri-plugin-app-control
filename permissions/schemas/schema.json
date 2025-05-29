@@ -355,34 +355,10 @@
           "markdownDescription": "Denies the ping command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for app control\n#### This permission set includes:\n\n- `allow-minimize-app`\n- `allow-close-app`\n- `allow-exit-app`\n- `allow-is-app-in-foreground`",
+          "description": "Allows controlling app lifecycle (minimize, close, exit) and checking foreground state.\n#### This default permission set includes:\n\n- `plugin:app-control|minimize_app`\n- `plugin:app-control|close_app`\n- `plugin:app-control|exit_app`\n- `plugin:app-control|is_app_in_foreground`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Default permissions for app control\n#### This permission set includes:\n\n- `allow-minimize-app`\n- `allow-close-app`\n- `allow-exit-app`\n- `allow-is-app-in-foreground`"
-        },
-        {
-          "description": "Allows minimizing the app to background",
-          "type": "string",
-          "const": "allow-minimize-app",
-          "markdownDescription": "Allows minimizing the app to background"
-        },
-        {
-          "description": "Allows closing the app",
-          "type": "string",
-          "const": "allow-close-app",
-          "markdownDescription": "Allows closing the app"
-        },
-        {
-          "description": "Allows exiting the app completely",
-          "type": "string",
-          "const": "allow-exit-app",
-          "markdownDescription": "Allows exiting the app completely"
-        },
-        {
-          "description": "Allows checking if app is in foreground",
-          "type": "string",
-          "const": "allow-is-app-in-foreground",
-          "markdownDescription": "Allows checking if app is in foreground"
+          "markdownDescription": "Allows controlling app lifecycle (minimize, close, exit) and checking foreground state.\n#### This default permission set includes:\n\n- `plugin:app-control|minimize_app`\n- `plugin:app-control|close_app`\n- `plugin:app-control|exit_app`\n- `plugin:app-control|is_app_in_foreground`"
         }
       ]
     }

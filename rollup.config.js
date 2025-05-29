@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import { join } from 'path'
+import { join, resolve } from 'path'
 import { cwd } from 'process'
 import typescript from '@rollup/plugin-typescript'
 
@@ -9,18 +9,25 @@ export default {
   input: 'guest-js/index.ts',
   output: [
     {
-      file: pkg.exports.import,
+      file: pkg.exports['.'].import,
       format: 'esm'
     },
     {
-      file: pkg.exports.require,
+      file: pkg.exports['.'].require,
       format: 'cjs'
     }
   ],
   plugins: [
     typescript({
-      declaration: true,
-      declarationDir: `./${pkg.exports.import.split('/')[0]}`
+      tsconfig: resolve(cwd(), 'guest-js/tsconfig.json'),
+      rootDir: resolve(cwd(), 'guest-js'),
+      include: ['index.ts'],
+      exclude: [
+        resolve(cwd(), 'node_modules/**'),
+        resolve(cwd(), 'dist/**'),
+        resolve(cwd(), 'webview-src/**')
+      ],
+      declaration: true
     })
   ],
   external: [

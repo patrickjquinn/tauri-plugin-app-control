@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.plugin.app-control"
+    namespace = "app.tauri.appcontrol"
     compileSdk = 34
 
     defaultConfig {
@@ -33,12 +33,11 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.9.0")
+    compileOnly(project(":tauri-android")) // Use the local project
     implementation("androidx.appcompat:appcompat:1.6.0")
     implementation("com.google.android.material:material:1.7.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation(project(":tauri-android"))
 }

@@ -3,6 +3,7 @@ use tauri::{AppHandle, Runtime, command};
 use crate::models::*;
 use crate::Result;
 use crate::AppControlExt;
+use crate::ExitOptions;
 
 #[command]
 pub(crate) async fn minimize_app<R: Runtime>(
@@ -21,9 +22,9 @@ pub(crate) async fn close_app<R: Runtime>(
 #[command]
 pub(crate) async fn exit_app<R: Runtime>(
     app: AppHandle<R>,
-    options: Option<ExitOptions>,
+    options: ExitOptions,
 ) -> Result<ExitResult> {
-    app.app_control().exit_app(options.unwrap_or_default())
+    app.app_control().exit_app(options)
 }
 
 #[command]
