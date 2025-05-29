@@ -1,6 +1,7 @@
 # Tauri Plugin: App Control
 
 [![crates.io](https://img.shields.io/crates/v/tauri-plugin-app-control.svg)](https://crates.io/crates/tauri-plugin-app-control)
+[![npm](https://img.shields.io/npm/v/tauri-plugin-app-control-api.svg)](https://www.npmjs.com/package/tauri-plugin-app-control-api)
 [![documentation](https://img.shields.io/docsrs/tauri-plugin-app-control)](https://docs.rs/tauri-plugin-app-control)
 [![License: Apache-2.0 OR MIT](https://img.shields.io/badge/License-Apache--2.0%20OR%20MIT-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -37,14 +38,7 @@ There are two main parts to installing this plugin: the Rust (Core) part and the
 
 Add the plugin to your Tauri app's `src-tauri/Cargo.toml`.
 
-**A. Using `cargo add` (Recommended for local development):**
-If you have the plugin locally:
-```bash
-cargo add tauri-plugin-app-control --path /path/to/your/tauri-plugin-app-control
-```
-*(Replace `/path/to/your/tauri-plugin-app-control` with the actual local path to this plugin's directory.)*
-
-If published to crates.io (once it is):\
+**A. Using `cargo add` (Recommended):**
 ```bash
 cargo add tauri-plugin-app-control
 ```
@@ -52,10 +46,14 @@ cargo add tauri-plugin-app-control
 **B. Manual `Cargo.toml` Edit:**
 Add the following to your `src-tauri/Cargo.toml` under `[dependencies]`:
 ```toml
-tauri-plugin-app-control = { path = "/path/to/your/tauri-plugin-app-control" } 
-# Or if published to crates.io (replace with actual version):
-# tauri-plugin-app-control = "0.1.0"
+tauri-plugin-app-control = "0.1.0" # Replace with the desired version from crates.io
 ```
+
+For local development, if you have a modified version of the plugin locally, you can use a path dependency:
+```toml
+tauri-plugin-app-control = { path = "/path/to/your/local/tauri-plugin-app-control" }
+```
+Or `cargo add tauri-plugin-app-control --path /path/to/your/local/tauri-plugin-app-control`.
 
 ### 2. Register the Plugin (Rust)
 
@@ -72,38 +70,10 @@ fn main() {
 
 ### 3. JavaScript/TypeScript API Installation
 
-The JavaScript bindings provide a typed API to interact with the plugin from your frontend code.
+The JavaScript bindings provide a typed API to interact with the plugin from your frontend code. The NPM package for this plugin is `tauri-plugin-app-control-api`.
 
-**A. Install the NPM package:**
-
-The NPM package for this plugin is `tauri-plugin-app-control-api`.
-
-If you are developing the plugin locally and want to test it in another project, you should first link it. Navigate to the root of *this plugin's directory* (`tauri-plugin-app-control`) and run:
-```bash
-# Using bun
-bun link
-
-# Using npm
-npm link
-
-# Using yarn v1 (classic)
-yarn link
-```
-This makes the package `tauri-plugin-app-control-api` available globally for linking.
-
-Then, in your **Tauri application's root directory** (where your frontend `package.json` is), link the package:
-```bash
-# Using bun
-bun link tauri-plugin-app-control-api
-
-# Using npm
-npm link tauri-plugin-app-control-api
-
-# Using yarn v1 (classic)
-yarn link tauri-plugin-app-control-api
-```
-
-If this plugin were published to NPM, you would install it directly in your Tauri application:
+**A. Install the NPM package (Recommended):**
+In your Tauri application's frontend project directory, install the package:
 ```bash
 # Using bun
 bun add tauri-plugin-app-control-api
@@ -117,6 +87,33 @@ pnpm add tauri-plugin-app-control-api
 # Using yarn
 yarn add tauri-plugin-app-control-api
 ```
+Ensure you install a version compatible with your Rust crate version (e.g., `0.1.0`).
+
+**B. Local Development & Linking:**
+If you are actively developing this plugin and want to test changes immediately in a consuming project:
+1.  **Link the Plugin Globally:** Navigate to the root of *this plugin's directory* (`tauri-plugin-app-control`) and run:
+    ```bash
+    # Using bun
+    bun link
+
+    # Using npm
+    npm link
+
+    # Using yarn v1 (classic)
+    yarn link
+    ```
+2.  **Link in Consuming Project:** Then, in your **Tauri application's root directory**, link the globally registered package:
+    ```bash
+    # Using bun
+    bun link tauri-plugin-app-control-api
+
+    # Using npm
+    npm link tauri-plugin-app-control-api
+
+    # Using yarn v1 (classic)
+    yarn link tauri-plugin-app-control-api
+    ```
+This setup ensures your consuming project uses your local plugin code. Remember to rebuild the plugin's JS bindings (`bun run build` in the plugin directory) after changes.
 
 ### 4. Permissions (Tauri v2+)
 
@@ -147,23 +144,6 @@ This grants permissions for the commands included in the plugin's `default` set.
 
 If you prefer to grant permissions individually instead of using the `default` set, you would reference them in your capabilities file like so:
 `"app-control:allow-minimize-app"`, `"app-control:allow-close-app"`, etc.
-
-```json
-{
-  "$schema": "../gen/schemas/desktop-schema.json", // Or mobile-schema.json for mobile-focused apps
-  "identifier": "default",
-  "description": "Default capabilities for the application.",
-  "windows": [
-    "main" // Ensure your main window identifier is listed
-  ],
-  "permissions": [
-    "core:default", // Or other core permissions you use
-    "app-control:default" // Add this line
-  ]
-}
-```
-
-This grants permissions for `minimize_app`, `close_app`, `exit_app`, and `is_app_in_foreground` commands when invoked from JavaScript, as these are included in the plugin's `default` set (which internally references `allow-minimize_app`, `allow-close_app`, etc.).
 
 ## Usage (JavaScript/TypeScript API)
 
