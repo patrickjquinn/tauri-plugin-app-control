@@ -1,6 +1,6 @@
 {
   "name": "tauri-plugin-app-control-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "You <you@example.com>",
   "description": "JS/TS API for Tauri App Control plugin (Android lifecycle).",
   "license": "MIT OR Apache-2.0",
