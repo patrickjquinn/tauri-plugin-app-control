@@ -4,10 +4,10 @@ Allows controlling app lifecycle (minimize, close, exit) and checking foreground
 
 #### This default permission set includes the following:
 
-- `allow-minimize_app`
-- `allow-close_app`
-- `allow-exit_app`
-- `allow-is_app_in_foreground`
+- `allow-minimize-app`
+- `allow-close-app`
+- `allow-exit-app`
+- `allow-is-app-in-foreground`
 
 ## Permission Table
 
