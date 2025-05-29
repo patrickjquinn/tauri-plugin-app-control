@@ -1,4 +1,4 @@
- # Tauri Plugin: App Control
+# Tauri Plugin: App Control
 
 [![crates.io](https://img.shields.io/crates/v/tauri-plugin-app-control.svg)](https://crates.io/crates/tauri-plugin-app-control)
 [![documentation](https://img.shields.io/docsrs/tauri-plugin-app-control)](https://docs.rs/tauri-plugin-app-control)
@@ -44,7 +44,7 @@ cargo add tauri-plugin-app-control --path /path/to/your/tauri-plugin-app-control
 ```
 *(Replace `/path/to/your/tauri-plugin-app-control` with the actual local path to this plugin's directory.)*
 
-If published to crates.io (once it is):
+If published to crates.io (once it is):\
 ```bash
 cargo add tauri-plugin-app-control
 ```
@@ -122,7 +122,7 @@ yarn add tauri-plugin-app-control-api
 
 For Tauri v2 and later, you must explicitly grant permissions to your plugin's commands. The `app-control` plugin comes with a default permission set that allows all its commands.
 
-In your app's `src-tauri/capabilities/default.json` (or your specific capability file), add the plugin's default permission set:
+In your app's `src-tauri/capabilities/default.json` (or your specific capability file), add the plugin's default permission set by referencing it as `"app-control:default"`:
 
 ```json
 {
@@ -134,12 +134,12 @@ In your app's `src-tauri/capabilities/default.json` (or your specific capability
   ],
   "permissions": [
     "core:default", // Or other core permissions you use
-    "plugin:app-control|default" // Add this line
+    "app-control:default" // Add this line
   ]
 }
 ```
 
-This grants permissions for `minimize_app`, `close_app`, `exit_app`, and `is_app_in_foreground` commands when invoked from JavaScript.
+This grants permissions for `minimize_app`, `close_app`, `exit_app`, and `is_app_in_foreground` commands when invoked from JavaScript, as these are included in the plugin's `default` set (which internally references `allow-minimize_app`, `allow-close_app`, etc.).
 
 ## Usage (JavaScript/TypeScript API)
 
@@ -309,7 +309,8 @@ Note: When calling `exit_app` directly from Rust as shown above, the `ExitOption
 
 -   Utilizes native Android `Activity` lifecycle methods and `ActivityManager`.
 -   `minimizeApp()` uses `activity.moveTaskToBack(true)`.
--   `closeApp()` calls `activity.finish()`.\n-   `exitApp()` uses `activity.finishAndRemoveTask()` and `android.os.Process.killProcess()` based on options.
+-   `closeApp()` calls `activity.finish()`.
+-   `exitApp()` uses `activity.finishAndRemoveTask()` and `android.os.Process.killProcess()` based on options.
 
 ## Desktop Behavior
 

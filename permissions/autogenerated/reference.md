@@ -4,10 +4,10 @@ Allows controlling app lifecycle (minimize, close, exit) and checking foreground
 
 #### This default permission set includes the following:
 
-- `plugin:app-control|minimize_app`
-- `plugin:app-control|close_app`
-- `plugin:app-control|exit_app`
-- `plugin:app-control|is_app_in_foreground`
+- `allow-minimize_app`
+- `allow-close_app`
+- `allow-exit_app`
+- `allow-is_app_in_foreground`
 
 ## Permission Table
 

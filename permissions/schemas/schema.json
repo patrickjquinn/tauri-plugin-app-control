@@ -355,10 +355,10 @@
           "markdownDescription": "Denies the ping command without any pre-configured scope."
         },
         {
-          "description": "Allows controlling app lifecycle (minimize, close, exit) and checking foreground state.\n#### This default permission set includes:\n\n- `plugin:app-control|minimize_app`\n- `plugin:app-control|close_app`\n- `plugin:app-control|exit_app`\n- `plugin:app-control|is_app_in_foreground`",
+          "description": "Allows controlling app lifecycle (minimize, close, exit) and checking foreground state.\n#### This default permission set includes:\n\n- `allow-minimize_app`\n- `allow-close_app`\n- `allow-exit_app`\n- `allow-is_app_in_foreground`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Allows controlling app lifecycle (minimize, close, exit) and checking foreground state.\n#### This default permission set includes:\n\n- `plugin:app-control|minimize_app`\n- `plugin:app-control|close_app`\n- `plugin:app-control|exit_app`\n- `plugin:app-control|is_app_in_foreground`"
+          "markdownDescription": "Allows controlling app lifecycle (minimize, close, exit) and checking foreground state.\n#### This default permission set includes:\n\n- `allow-minimize_app`\n- `allow-close_app`\n- `allow-exit_app`\n- `allow-is_app_in_foreground`"
         }
       ]
     }
